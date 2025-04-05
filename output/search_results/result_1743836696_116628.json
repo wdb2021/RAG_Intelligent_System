@@ -1,0 +1,22 @@
+{
+  "query": "What's the DeepSeek-R1-Zero: Pure RL Training Basic Model",
+  "timestamp": 1743836696,
+  "results": [
+    {
+      "chunk_id": 0,
+      "score": 0.7623327374458313,
+      "text_preview": "2.2 DeepSeek-R1-Zero: Pure RL Training Basic Model\nContent Overview:\nThe authors describe the DeepSe",
+      "full_text_path": "output/chunks.json",
+      "char_count": 321,
+      "sentence_count": 3
+    },
+    {
+      "chunk_id": 10,
+      "score": 0.720332145690918,
+      "text_preview": "These are all worthy of further research and verification. 2.2.4 Performance and evolution of DeepSe",
+      "full_text_path": "output/chunks.json",
+      "char_count": 382,
+      "sentence_count": 2
+    }
+  ]
+}

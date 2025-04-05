@@ -31,11 +31,11 @@ class SummaryProcessor:
         return f"请用最简洁的中文总结以下对话的核心内容（不超过100字）：\n{recent_dialogue}"
 
     # ---------- 新增文件摘要功能 ----------
-    def generate_file_summary(self, file_path: Union[str, Path], max_length: int = 300) -> str:
+    def generate_file_summary(self, file_path: Union[str, Path], max_length: int = 500) -> str:
         """
         生成文件摘要（新增功能）
         :param file_path: 文本文件路径（支持.txt/.md等）
-        :param max_length: 摘要最大长度（默认300字）
+        :param max_length: 摘要最大长度（默认1000字）
         """
         try:
             content = self._read_file(file_path)

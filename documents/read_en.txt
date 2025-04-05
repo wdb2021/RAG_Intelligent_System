@@ -1,0 +1,109 @@
+2.2 DeepSeek-R1-Zero: Pure RL Training Basic Model
+Content Overview:
+The authors describe the DeepSeek-R1-Zero stage in detail:
+Reinforcement learning algorithm: Use Group Relative Policy Optimization (GRPO) to reduce RL costs. GRPO is different from traditional PPO. It does not require a value network of the same size. Instead, it calculates group rewards as a baseline by sampling a set of old policy outputs, which greatly saves calculations. Formulas (1)-(3) define the calculation of the optimization objective and advantage function, and update the policy based on the relative reward of each group of samples.
+Reward modeling: Use rule-driven rewards (non-neural network model), including accuracy rewards (ensuring that the answer is correct, such as math answer box inspection, code compilation test) and format rewards (ensuring that the reasoning process is wrapped with <think> tags). They did not use a learning process or result reward model to avoid reward bias/vulnerabilities in large-scale RL (reward hacking) and additional training overhead.
+Training template: A concise training template is designed, requiring the model to output the reasoning process ( <think> tag) first and then the answer ( <answer> tag). This template only constrains the format and does not limit the specific content strategy, so as to observe the natural evolution of the model in RL and avoid too much human bias.
+Connection with the previous article:
+The RL method of DeepSeek-R1-Zero was introduced earlier. This section specifically expands on how to implement it: GRPO algorithm, reward system, training format. It follows the "Method Overview", provides technical details of the R1-Zero stage, and prepares for subsequent performance results.
+Technical details:
+GRPO (Group Relative Policy Optimization): This is the core algorithm, which does not require a value network and uses group samples to calculate the baseline to improve efficiency. It follows the PPO concept, but innovates in Group Advantage calculation.
+Reward design: There are two reward models for accuracy and format. The former directly rewards through deterministic verification (such as standard answer format in mathematics and code compilation test); the latter forces the reasoning process to be output in a specified tag.
+ARXIV.ORG
+ARXIV.ORG
+ARXIV.ORG
+ARXIV.ORG
+ARXIV.ORG ARXIV.ORG
+ARXIV.ORG
+ARXIV.ORG ARXIV.ORG
+3/23
+Reward hacking: It is mentioned that neural reward models are not used because large-model RL is prone to model opportunism to maximize rewards, but the results are meaningless. This is very critical and shows the author's emphasis on the robustness of reward models.
+Template: A special User/Assistant dialogue format is designed with <think> and <answer> tags. This move unifies the answer format, makes training and evaluation more standardized, and leaves room for the model to play its own role.
+Significance and highlights:
+The highlights of this paragraph include:
+Innovative RL algorithm application: Using more efficient GRPO for LLM reasoning training, showing the important idea of ​​saving computing power on large models.
+Robust reward system: Pure rule rewards avoid complex reward model training and reduce side effects (such as reward hacking).
+Format guidance: Template strategy ensures uniform output format, laying the foundation for subsequent self-iteration (for example, ensuring that the model's reasoning Chain-of-Thought is readable and clearly marked), which is further reflected in the subsequent readability improvement of the R1 model.
+Extension and thinking:
+You can think about why GRPO is suitable for this scenario? How does the absence of a value network affect convergence? Can smarter rewards such as human preference models be introduced in the future? Also, can designing simple and unified templates for different tasks make RL more effective? For example, is the idea of ​​guiding model display universal? These are all worthy of further research and verification.
+2.2.4 Performance and evolution of DeepSeek-R1-Zero
+Content overview:
+This section reports the training performance of DeepSeek-R1-Zero and the phenomena observed during the process:
+Performance indicators: Table 2 shows the performance of R1-Zero on multiple reasoning benchmarks, compared with OpenAI-o1-mini and o1-0912.
+DeepSeek-R1-Zero achieved 71.0% in AIME 2024, 86.7% in MATH-500, 95.9% in GPQA Diamond, 73.3% in LiveCodeBench, and 1444 in CodeForces rating. Although AIME is slightly lower than o1-0912, it can be further improved to 86.7% through majority voting, surpassing o1-0912.
+Training curve: Figure 2 shows that the accuracy of R1-Zero on AIME increases steadily with the number of RL steps, from 15.6% at the beginning to 71.0%, verifying the effectiveness of the RL algorithm.
+Emergent reasoning ability: R1-Zero gradually learns to extend the thinking chain (output more reasoning tokens), as shown in Figure 3, and its average response length continues to grow during training. This self-evolution allows the model to spontaneously use more thinking time to solve complex problems.
+Derived behaviors: As the number of inference tokens increases, the model naturally develops advanced behaviors such as reflection (reviewing and correcting previous steps) and multi-path exploration. These are not hard-coded by humans, but emerge spontaneously driven by RL rewards.
+ARXIV.ORG
+ARXIV.ORG
+ARXIV.ORG
+ARXIV.ORG
+4/23
+“Aha moment”: During training, it was observed that the model would suddenly change its strategy in the middle stage, such as re-examining the solution method, giving people a feeling of “a flash of inspiration”. Table 3 illustrates an example of an intermediate model version suddenly stopping in the middle of solving a problem “Wait, … aha moment”, and then resolving the problem in a different way. This shows that RL can guide the model to adjust its thinking autonomously.
+Disadvantages: Despite its strong reasoning, R1-Zero also has obvious problems, such as poor readability (output mixed with multiple languages, lack of formatting), which makes it not user-friendly for direct interaction. For this reason, the next step DeepSeek-R1 is introduced to improve readability and versatility.
+Connection with the previous article:
+The previous article discussed the training details of R1-Zero. This section gives the experimental results and training observations. The results prove the effectiveness of the previous strategy, and the self-evolution behavior is consistent with the previous template design without content constraints, supporting the above decision.
+Technical details:
+Benchmarks: List multiple benchmarks such as AIME (mathematics competition), MATH-500 (mathematics), GPQA Diamond (general knowledge question answering), LiveCodeBench (programming real-time evaluation), CodeForces (algorithm competition ranking). Pass@1, Cons@64 (consensus 64 sample majority voting) and other indicators are used for evaluation.
+Majority Voting: Sample each question multiple times and let the answer vote. Here Cons@64 = the accuracy of 64 samples in majority voting, which is an important technique to improve the reliability of the model.
+Self-evolution: Introduce the concept of thinking time (number of inference tokens) to show that the model automatically increases the inference steps.
+Reflection: Model introspection. No special constraints are added in RL, but it has learned to check and correct errors.
+"Aha moment": a moment of qualitative change, indicating a change in model strategy. In the example, the model stops and says "Wait, wait... let's
+reevaluate step by step", which shows that the model begins to reflect on the previous problem-solving path.
+Defects: Emphasis on readability issues, such as mixed use of multiple languages, no MarkDown format to highlight answers, etc.
+Significance and highlights:
+Performance is close to SOTA: DeepSeek-R1-Zero relies solely on RL, and has already approached the performance of the OpenAI-o1 series. It is very meaningful to achieve this result with unsupervised data, proving that RL can greatly improve the model's reasoning ability.
+Emergent behavior: The model spontaneously learns to prolong thinking and reflection, which is a strong AI feature. Reflection and multi-path exploration show that LLM can think similarly to humans under appropriate incentives, which is impressive.
+"Aha moment": This phenomenon is not only meaningful to the model, but also a surprise to the researchers, showing that RL may inspire LLM to produce novel problem-solving strategies.
+Problem discovery: The defects exposed by R1-Zero (such as readability) point the way for the next step of improvement. By exposing the problem, the importance of in-depth improvement is highlighted.
+5/23
+Extension and thinking:
+These findings lead to some thoughts:
+Can methods such as Majority Voting be automatically integrated into the reasoning process to reduce reasoning errors?
+Can model introspection and insight be enhanced by designing metacognitive modules?
+What is the root cause of the multi-language mixing problem of R1-Zero? (It may be that in the pure RL process, the model unconsciously calls the pre-trained language ability to improve accuracy, thereby mixing language output.) R1 will use language consistency rewards to solve it later.
+Monitoring emergent behavior in RL training itself can become a research topic: How to quantify "aha moment"? Are these behaviors common on different seeds or different models?
+3. DeepSeek-R1: Cold Start Combined with Reinforcement Learning
+3.3.1 Cold Start
+Content Overview:
+Due to the initial instability and poor readability of DeepSeek-R1-Zero, DeepSeek-R1 introduces **“cold start data”**
+for pre-fine-tuning:
+In order to avoid the instability of pure RL at the beginning, the author collected/constructed thousands of high-quality long chain CoT data to fine-tune the basic model and make it the initial RL strategy.
+The cold start data comes from various sources: including few-shot examples to guide long CoT, directly prompting the model to generate long answers with self-reflection and verification, and using R1-Zero's existing output to manually post-process and organize the readable version.
+These cold start data focus on readability: the output mode is designed as |special
+_
+token|
+<reasoning_process>|special
+_
+token|<summary>, that is, the answer consists of two parts-the reasoning process
+(Chain-of-Thought), and the summary at the end. Through screening, we ensure that there is no multi-language mixing, the answers have a clear format, and are user-friendly.
+Advantages of cold start data: ① More readable, the output has markdown or clear format; ② Higher potential (with human prior patterns) makes the subsequent model performance better than R1-Zero without cold start.
+Connection with the previous article:
+This paragraph connects the defects of R1-Zero and proposes a solution, cold start. It not only answers the improvement direction proposed in the previous article (improving readability and stabilizing training), but also lays the groundwork for the subsequent R1 training stages (there are RL and SFT stages later).
+Technical details:
+The amount of cold start data: thousands of pieces, which is in sharp contrast to the complete unsupervised nature of R1-Zero.
+6/23
+Acquisition methods: including Few-shot long CoT, direct prompts to generate detailed answers, and manual cleaning using R1-Zero's answers, etc. These methods focus on obtaining long and clear examples of reasoning processes.
+Format: The new output format introduces the separation of reasoning process + summary. This can be seen as a simple "template upgrade": R1-Zero template emphasizes <think>/<answer>, and R1 template further requires summary, which is adjusted for human readability.
+special
+_
+token should be a marker to define the reasoning and summary parts.
+Human preferences: Cold start data contains human preferences (such as summary, single language) in design, which is a manifestation of artificial priors guiding model behavior.
+Significance and highlights:
+Innovative cold start strategy: Use small data to improve the initial state, accelerate RL convergence and improve the final performance. This saves a lot of computing power in large model training and is a very pragmatic innovation.
+User-friendliness: Fusion summary makes the output intuitive, which is very important for LLM landing application. DeepSeek-R1 is more suitable for users, because the reasoning process is clear and the results are clear, which is valuable to both developers and end users.
+Show that RL and small amounts of supervision can complement each other: Prove that even a small amount of high-quality data can effectively guide pure RL, making the model more stable and more powerful. This is a generalizable experience.
+Extension and thinking:
+Data construction cost: How are these long CoT data efficiently constructed? This leads to thinking about automatic data generation (e.g., using existing strong models) vs. manual polishing.
+Is there an optimal ratio: How much cold start data is enough? If there is more, will it become mainly based on SFT and lose the meaning of "pure RL"?
+Iterative training: The article mentions "we think iterative training is a better path", suggesting that in the future, model training can alternate between multiple rounds of SFT and RL. This is similar to **"curriculum learning" or "stage training"** in reinforcement learning, and the optimal strategy can be further explored.
+Multilingual problem: R1 mainly uses Chinese and English optimization, and does not handle other languages ​​well. In the future, it may be necessary to add cold start data of more languages ​​or multilingual consistency rewards to expand the model language coverage.
+2.3.2 Reasoning-Oriented Reinforcement Learning (Reasoning-Oriented RL)
+Content Overview:
+After fine-tuning the basic model with cold start data, the author conducts large-scale reasoning-oriented RL on DeepSeek-R1:
+The RL process focuses on reasoning-intensive tasks, such as programming, mathematics, science, logical reasoning, etc. These tasks have clear questions and definite correct answers, which are easy to evaluate and reward.
+7/23
+During training, it was found that the problem of language mixing still exists (especially when the prompt contains multiple languages, CoT will mix Chinese and English), so a language consistency reward is added. Specific approach: calculate the proportion of target language vocabulary in the reasoning process (CoT) as part of the reward. Although eliminating mixing slightly reduces performance, it improves readability and is more in line with human preferences.
+The final total reward = reasoning task accuracy reward + language consistency reward (simple addition). Then, under this reward, continue RL training for the fine-tuned model until it converges on the reasoning task.
+Connection with the previous article:
+Immediately after the cold start SFT, this is the second stage of R1 training (enhancement

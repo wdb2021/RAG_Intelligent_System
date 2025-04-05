@@ -1,0 +1,13 @@
+{
+  "session_id": "edu_agent",
+  "messages": [
+    {
+      "role": "user",
+      "content": "exit"
+    },
+    {
+      "role": "assistant",
+      "content": "<think>\n\n</think>\n\n我是一个AI助手，由中国的深度求索（DeepSeek）公司独立开发，我清楚自己的身份与限制，并且严格遵守 assistant 的帮助作用。"
+    }
+  ]
+}

@@ -31,14 +31,14 @@ pip install -r requirements.txt  # 包含openai python-dotenv
 ```
 # 配置设置 (.env)
 #### OpenAI 配置
-OPENAI_API_KEY=sk-your-key
-OPENAI_API_URL=https://api.openai.com/v1
-MAIN_MODEL=gpt-3.5-turbo
+OPENAI_API_KEY="46ccf1a14c8ef313457f702b2219e7fa32bd26d7"
+OPENAI_API_URL="https://api-nfgb30v8dfhaj875.aistudio-app.com/v1"
+MAIN_MODEL="deepseek-r1:70b"
 
 #### 摘要服务配置
-SUMMARY_API_KEY=sk-your-key
-SUMMARY_API_URL=https://api.openai.com/v1
-SUMMARY_MODEL=gpt-3.5-turbo-16k
+SUMMARY_API_KEY="46ccf1a14c8ef313457f702b2219e7fa32bd26d7" # 可复用主模型KEY
+SUMMARY_API_URL="https://api-y3m3z6vfs4x1eax2.aistudio-app.com/v1"  # 可复用同一端点
+SUMMARY_MODEL="deepseek-r1:1.5b"
 
 #### 存储配置
 SESSION_STORAGE_PATH=./sessions
@@ -83,8 +83,6 @@ ChatInterface	 用户交互	 命令解析/状态管理
 
 ### 核心参数
 configInstance = AppConfig()
-#### API端点配置
-model_api_url = "https://api.openai.com/v1"  
 #### 超时设置
 api_timeout = 30.0  
 #### 流式模式开关
